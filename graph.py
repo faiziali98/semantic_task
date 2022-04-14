@@ -30,6 +30,16 @@ class Graph():
         Adds multiple nodes to the graph
     add_edges_to_graph(self, edges)
         Adds multiple edge to the graph
+    def get_in_neighbours(self, node)
+        Get all nodes that have edge to "node"
+    def calculate_page_rank(self, rounds)
+       Calculate page rank
+    def get_neighbours(self, node)
+       Get all neighbours to/from "node"
+    def get_out_neighbours(self, node)
+       Get all nodes that have edge from "node"
+    def get_in_neighbours(self, node)
+       Get all nodes that have edge to "node"
     __str__(self):
         a formatted string to print out graph
     """
@@ -165,7 +175,7 @@ class Graph():
             page_rank[node] = 1 / num_nodes
             in_neighbours[node] = self.get_in_neighbours(node)
             out_neighbours[node] = self.get_out_neighbours(node)
-
+        
         def update_page_rank():
             new_page_ranks = {}
             for node in self._nodes:
@@ -191,7 +201,6 @@ class Graph():
     def get_adjency(self):
         return self._adjency
 
-        
     def __str__(self):
         """a formatted string to print out graph"""
         return f"Nodes: {self._nodes}\nEdges: {self._edge}\nAdjency: {self._adjency}"
