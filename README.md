@@ -16,6 +16,10 @@ This repo contains a simple graph implementation that allows users to, via a fro
 - The page_rank function does not converge but runs for `n` rounds.
 - Tests are done for main functions.
 
+## Requirement:
+
+Python version >= 3.7
+
 ## Class Graph
 
 ```
@@ -66,6 +70,8 @@ This repo contains a simple graph implementation that allows users to, via a fro
 
     print(g.calculate_page_rank(4))
 ```
+
+`python3 example.py`
 
 ## How to Test:
 
