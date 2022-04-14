@@ -9,9 +9,16 @@ This repo contains a simple graph implementation that allows users to, via a fro
 - Add edges to a graph
 - Get neighboring nodes given a node (directed or undirected as you prefer)
 
+## Assumptions:
+
+- It is a very basic implementation of Graph and page_rank.
+- Most functions do not cater for unordirary input. e.g. you can send any input for add_edge.
+- The page_rank function does not converge but runs for `n` rounds.
+- Tests are done for main functions.
+
 ## Class Graph
 
-"""
+```
     A class used to represent a directed Graph
 
     ...
@@ -47,7 +54,18 @@ This repo contains a simple graph implementation that allows users to, via a fro
        Get all nodes that have edge to "node"
     __str__(self):
         a formatted string to print out graph
-"""
+```
+
+## Example
+
+```
+    g = Graph()
+
+    g.add_nodes_to_graph(["a", "b", "c", "d", "e"])
+    g.add_edges_to_graph([("a", "b"), ("b", "c"), ("b", "d"), ("c", "b"), ("d", "c"), ("d", "a"), ("d", "e"), ("e", "a")])
+
+    print(g.calculate_page_rank(4))
+```
 
 ## How to Test:
 
