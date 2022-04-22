@@ -78,3 +78,19 @@ Python version >= 3.7
 - install pytest
 - run: pytest
 
+
+## Frontend:
+
+Added React frontend. 
+
+```
+cd mapp
+npm install
+npm start
+```
+
+## Backend
+
+A flask backend is added that exposes graph APIs.
+
+`python3 server.py`
