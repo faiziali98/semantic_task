@@ -1,6 +1,7 @@
 import Graph from "react-graph-vis";
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import GraphClass from "./utils/graph";
 
 const options = {
   layout: {
@@ -33,7 +34,8 @@ const App = () => {
     nodeMap: {}
   });
 
-  const [formVals, setFormVals] = useState({node: '', to: '', from: '', rounds: ''})
+  const [graphVal, setGraphVal] = useState(new GraphClass());
+  const [formVals, setFormVals] = useState({node: '', to: '', from: '', rounds: ''});
 
   const createNode = (name) => {
     const color = randomColor();
@@ -71,31 +73,30 @@ const App = () => {
   };
 
   useEffect(() => {
-    fetch("/get_nodes")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          result.forEach(element => {
-            createNode(element);
-          });
-          fetch("/get_edges")
-            .then(res => res.json())
-            .then(
-              (result) => {
-                result.forEach(element => {
-                  createEdge(element);
-                });
-              },
-              (error) => {
-                console.log(error)
-              }
-            );
-        },
-        (error) => {
-          console.log(error)
-        }
-      );
-    
+    graphVal.add_nodes_to_graph(["a", "b", "c", "d", "e"])
+    graphVal.add_edges_to_graph(
+        [
+            ["a", "b"],
+            ["b", "c"],
+            ["b", "d"],
+            ["c", "b"],
+            ["d", "c"],
+            ["d", "a"],
+            ["d", "e"],
+            ["e", "a"],
+        ]
+    )
+
+    graphVal.get_nodes().forEach(element => {
+      createNode(element);
+    });
+
+    graphVal.get_edges().forEach(element => {
+      createEdge(element);
+    });
+
+    setGraphVal(graphVal);
+     // eslint-disable-next-line
   }, [])
 
   const handleChange = (name) => (event) => {
@@ -107,51 +108,37 @@ const App = () => {
   const handleSubmit = (type) => (event) => {
     event.preventDefault();
     const addNode = type === 'node';
-    const url =  addNode ? '/add_node' : '/add_edges'
 
     const {node, from, to} = formVals;
-    const data = addNode ? { node } : { from, to}
+    const data = addNode ?  node  : [ from, to ]
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    };
-
-    fetch(url, requestOptions)
-        .then(response => addNode ? createNode(node) : createEdge([from, to]) );    
+    addNode ? graphVal.add_node_to_graph(data) : graphVal.add_edge_to_graph(data);
+    addNode ? createNode(node) : createEdge([from, to]);
+    
+    setGraphVal(graphVal);
   }
 
   const getPageRank = (event) => {
     event.preventDefault();
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({rounds: formVals.rounds})
-    };
-
-    fetch("/get_page_ranks", requestOptions)
-      .then(res => res.json())
-      .then(res => {
-        const nodeMap = {...state.nodeMap};
+    const nodeMap = {...state.nodeMap};
+    const res = graphVal.calculate_page_rank(formVals.rounds);
         
 
-        const newNodes = Object.keys(res).map((key) => {
-          const color = randomColor();
-          return{ 
-            id: nodeMap[key], label: `${key} \n ${res[key]}`, color 
-          };
-        });
+    const newNodes = Object.keys(res).map((key) => {
+      const color = randomColor();
+      return{ 
+        id: nodeMap[key], label: `${key} \n ${res[key]}`, color 
+      };
+    });
 
-        setState(({ graph: { nodes, ...restGraph }, ...rest }) => ({
-            graph: {
-              nodes:[...newNodes],
-              ...restGraph,
-            },
-            ...rest
-        }));
-      });  
+    setState(({ graph: { nodes, ...restGraph }, ...rest }) => ({
+        graph: {
+          nodes:[...newNodes],
+          ...restGraph,
+        },
+        ...rest
+    })); 
   }
 
   const { graph, events } = state;
